@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-// Update the style definitions at the top
 const labelStyle = {
   display: 'block',
   marginBottom: '5px',
   color: '#4a5568',
   fontSize: '0.875rem',
-  fontWeight: '500'
+  fontWeight: '500',
+  fontFamily: 'Poppins, sans-serif'
 }
 
 const inputStyle = {
@@ -21,6 +21,7 @@ const inputStyle = {
   backgroundColor: 'white',
   boxSizing: 'border-box',
   fontSize: '0.875rem',
+  fontFamily: 'Poppins, sans-serif',
   transition: 'border-color 0.2s ease',
   outline: 'none',
   '&:focus': {
@@ -48,12 +49,53 @@ export default function PatientForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
 
+  // Create refs for all inputs
+  const inputRefs = {
+    name: useRef(),
+    age: useRef(),
+    tel: useRef(),
+    address: useRef(),
+    comorbids: useRef(),
+    diagnosis: useRef(),
+    height: useRef(),
+    weight: useRef(),
+    blood_pressure: useRef(),
+    pulse: useRef(),
+    temperature: useRef(),
+    diagnosis_patient: useRef(),
+  }
+
+  // Order of fields for navigation
+  const fieldOrder = [
+    'name', 'age', 'tel', 'address', 'comorbids', 'diagnosis',
+    'height', 'weight', 'blood_pressure', 'pulse', 'temperature', 'diagnosis_patient'
+  ]
+
+  const handleKeyDown = (e, currentField) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const currentIndex = fieldOrder.indexOf(currentField)
+      
+      // If it's the last field and all fields are filled, submit the form
+      if (currentIndex === fieldOrder.length - 1 && Object.values(formData).every(value => value !== '')) {
+        handleSubmit(e)
+        return
+      }
+      
+      // Otherwise, move to the next field
+      if (currentIndex < fieldOrder.length - 1) {
+        const nextField = fieldOrder[currentIndex + 1]
+        inputRefs[nextField].current.focus()
+      }
+    }
+  }
+
   const handleChange = (e) => {
     setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
+      ...formData,
+      [e.target.name]: e.target.value,
     })
-    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -76,9 +118,10 @@ export default function PatientForm() {
         temperature: '',
         diagnosis_patient: '',
       })
+      // Success message will disappear after 3 seconds
       setTimeout(() => {
-        navigate('/patients')
-      }, 1500)
+        setShowSuccessMessage(false)
+      }, 3000)
     } catch (error) {
       console.error('Error creating patient:', error)
       alert('Error submitting patient information. Please try again.')
@@ -108,54 +151,27 @@ export default function PatientForm() {
         Patient Information Form
       </h2>
       <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1.25rem' }}>
-        <div>
-          <label htmlFor="name" style={labelStyle}>Name</label>
-          <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="age" style={labelStyle}>Age</label>
-          <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} required style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="tel" style={labelStyle}>Telephone</label>
-          <input type="tel" id="tel" name="tel" value={formData.tel} onChange={handleChange} required style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="address" style={labelStyle}>Address</label>
-          <textarea id="address" name="address" value={formData.address} onChange={handleChange} required style={{...inputStyle, height: '60px'}} />
-        </div>
-        <div>
-          <label htmlFor="comorbids" style={labelStyle}>Comorbidities</label>
-          <input type="text" id="comorbids" name="comorbids" value={formData.comorbids} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="diagnosis" style={labelStyle}>Diagnosis</label>
-          <input type="text" id="diagnosis" name="diagnosis" value={formData.diagnosis} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="height" style={labelStyle}>Height (cm)</label>
-          <input type="number" id="height" name="height" value={formData.height} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="weight" style={labelStyle}>Weight (kg)</label>
-          <input type="number" id="weight" name="weight" value={formData.weight} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="blood_pressure" style={labelStyle}>Blood Pressure</label>
-          <input type="text" id="blood_pressure" name="blood_pressure" value={formData.blood_pressure} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="pulse" style={labelStyle}>Pulse</label>
-          <input type="number" id="pulse" name="pulse" value={formData.pulse} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="temperature" style={labelStyle}>Temperature (°C)</label>
-          <input type="number" id="temperature" name="temperature" value={formData.temperature} onChange={handleChange} step="0.1" style={inputStyle} />
-        </div>
-        <div>
-          <label htmlFor="diagnosis_patient" style={labelStyle}>Patient Diagnosis</label>
-          <textarea id="diagnosis_patient" name="diagnosis_patient" value={formData.diagnosis_patient} onChange={handleChange} style={{...inputStyle, height: '60px'}} />
-        </div>
+        {fieldOrder.map((field) => (
+          <div key={field}>
+            <label htmlFor={field} style={labelStyle}>
+              {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
+            </label>
+            <input
+              type={field === 'age' || field === 'height' || field === 'weight' || field === 'pulse' ? 'number' : 
+                    field === 'temperature' ? 'number' : 
+                    field === 'tel' ? 'tel' : 'text'}
+              id={field}
+              name={field}
+              value={formData[field]}
+              onChange={handleChange}
+              onKeyDown={(e) => handleKeyDown(e, field)}
+              ref={inputRefs[field]}
+              required
+              style={inputStyle}
+              step={field === 'temperature' ? '0.1' : '1'}
+            />
+          </div>
+        ))}
         <button
           type="submit"
           style={{
