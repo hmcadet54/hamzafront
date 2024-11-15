@@ -67,8 +67,8 @@ export default function PatientForm() {
 
   // Order of fields for navigation
   const fieldOrder = [
-    'name', 'age', 'tel', 'address', 'comorbids', 'diagnosis',
-    'height', 'weight', 'blood_pressure', 'pulse', 'temperature', 'diagnosis_patient'
+    'name', 'age', 'tel', 'address',
+    'height', 'weight', 'blood_pressure', 'pulse', 'temperature', 'sugar', 'bmi', 'diagnosis_patient'
   ]
 
   const handleKeyDown = (e, currentField) => {
@@ -109,13 +109,13 @@ export default function PatientForm() {
         age: '',
         tel: '',
         address: '',
-        comorbids: '',
-        diagnosis: '',
         height: '',
         weight: '',
         blood_pressure: '',
         pulse: '',
         temperature: '',
+        sugar: '',
+        bmi: '',
         diagnosis_patient: '',
       })
       // Success message will disappear after 3 seconds

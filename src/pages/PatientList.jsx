@@ -119,13 +119,13 @@ export default function PatientList() {
             <th style={thStyle}>Age</th>
             <th style={thStyle}>Telephone</th>
             <th style={thStyle}>Address</th>
-            <th style={thStyle}>Comorbidities</th>
-            <th style={thStyle}>Diagnosis</th>
             <th style={thStyle}>Height (cm)</th>
             <th style={thStyle}>Weight (kg)</th>
             <th style={thStyle}>Blood Pressure</th>
             <th style={thStyle}>Pulse</th>
             <th style={thStyle}>Temperature</th>
+            <th style={thStyle}>Sugar</th>
+            <th style={thStyle}>BMI</th>
             <th style={thStyle}>Patient Diagnosis</th>
           </tr>
         </thead>
@@ -136,13 +136,13 @@ export default function PatientList() {
               <td style={tdStyle}>{patient.age}</td>
               <td style={tdStyle}>{patient.tel}</td>
               <td style={tdStyle}>{patient.address}</td>
-              <td style={tdStyle}>{patient.comorbids}</td>
-              <td style={tdStyle}>{patient.diagnosis}</td>
               <td style={tdStyle}>{patient.height}</td>
               <td style={tdStyle}>{patient.weight}</td>
               <td style={tdStyle}>{patient.blood_pressure}</td>
               <td style={tdStyle}>{patient.pulse}</td>
               <td style={tdStyle}>{patient.temperature}</td>
+              <td style={tdStyle}>{patient.sugar}</td>
+              <td style={tdStyle}>{patient.bmi}</td>
               <td style={tdStyle}>{patient.diagnosis_patient}</td>
             </tr>
           ))}
@@ -161,9 +161,14 @@ export default function PatientList() {
           <div style={{ display: 'grid', gap: '0.5rem' }}>
             <p><strong>Age:</strong> {patient.age}</p>
             <p><strong>Tel:</strong> {patient.tel}</p>
-            <p><strong>Diagnosis:</strong> {patient.diagnosis}</p>
             <p><strong>BP:</strong> {patient.blood_pressure}</p>
+            <p><strong>Pulse:</strong> {patient.pulse}</p>
+            <p><strong>Weight:</strong> {patient.weight}kg</p>
+            <p><strong>Height:</strong> {patient.height}cm</p>
             <p><strong>Temperature:</strong> {patient.temperature}°C</p>
+            <p><strong>BMI:</strong> {patient.bmi}</p>
+            <p><strong>Sugar:</strong> {patient.sugar}</p>
+            <p><strong>Diagnosis:</strong> {patient.diagnosis_patient}</p>
           </div>
         </div>
       ))}
